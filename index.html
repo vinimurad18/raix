@@ -1,0 +1,491 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Raíx — Weekly Report</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --teal:#006178;--teal-mid:#64828C;--teal-dark:#003D4C;
+  --gray-light:#CED8DA;--gray-bg:#E9EAEE;--gray-mid:#BEBFC1;--gray-soft:#D8D8D8;
+  --red:#DA5417;--orange:#F5781B;--yellow:#E9A832;
+  --bg:#F6F8F9;--bg-card:#FFFFFF;--bd:#D8DFE2;--bd2:#CED8DA;
+  --t1:#003D4C;--t2:#64828C;--t3:#8A9BA3;--t4:#A8B5BC;
+  --s-progress:#006178;--s-progress-bg:rgba(0,97,120,.07);
+  --s-hold:#E9A832;--s-hold-bg:rgba(233,168,50,.07);
+  --s-done:#2E8B57;--s-done-bg:rgba(46,139,87,.07);
+  --s-notok:#DA5417;--s-notok-bg:rgba(218,84,23,.07);
+  --pri-high:#C0392B;--pri-high-bg:rgba(192,57,43,.08);
+  --pri-med:#E9A832;--pri-med-bg:rgba(233,168,50,.08);
+  --pri-low:#64828C;--pri-low-bg:rgba(100,130,140,.08);
+  --r:10px;
+}
+body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--t1);line-height:1.5;-webkit-font-smoothing:antialiased}
+
+/* TOPBAR */
+.top{position:sticky;top:0;z-index:99;background:var(--teal-dark);box-shadow:0 2px 12px rgba(0,61,76,.18)}
+.top-in{max-width:1280px;margin:0 auto;padding:12px 32px;display:flex;align-items:center;justify-content:space-between}
+.logo{display:flex;align-items:center;gap:14px}
+.logo-img{height:30px;width:auto;object-fit:contain}
+.logo-sep{width:1px;height:22px;background:rgba(255,255,255,.2)}
+.logo small{font-size:11px;color:rgba(255,255,255,.55)}
+.top-r{display:flex;align-items:center;gap:10px}
+.date-tag{font-family:'JetBrains Mono',monospace;font-size:11px;color:rgba(255,255,255,.8);padding:4px 12px;border-radius:14px;background:rgba(255,255,255,.1);cursor:text;outline:none;min-width:60px}
+.date-tag:hover{background:rgba(255,255,255,.15)}
+.date-tag:focus{background:rgba(255,255,255,.2);box-shadow:0 0 0 2px rgba(255,255,255,.25)}
+
+/* NAV */
+.nav-wrap{background:#fff;border-bottom:1px solid var(--bd);box-shadow:0 1px 3px rgba(0,61,76,.04)}
+.nav{max-width:1280px;margin:0 auto;padding:0 32px;display:flex;gap:1px;overflow-x:auto}
+.nav button{padding:10px 15px;border:none;background:transparent;color:var(--t3);font-family:'DM Sans',sans-serif;font-size:12.5px;font-weight:500;cursor:pointer;border-bottom:2px solid transparent;transition:all .15s;white-space:nowrap}
+.nav button:hover{color:var(--t1)}
+.nav button.on{color:var(--teal);border-bottom-color:var(--teal)}
+.nav .ct{font-family:'JetBrains Mono',monospace;font-size:9px;background:var(--gray-bg);color:var(--t3);padding:1px 5px;border-radius:8px;margin-left:4px}
+.nav button.on .ct{background:var(--s-progress-bg);color:var(--teal)}
+
+.main{max-width:1280px;margin:0 auto;padding:24px 32px 72px}
+.tab{display:none}.tab.on{display:block}
+
+/* KPIs */
+.kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:24px}
+.kp{background:var(--bg-card);border:1px solid var(--bd);border-radius:var(--r);padding:16px 20px;border-left:3px solid transparent;transition:box-shadow .15s}
+.kp:hover{box-shadow:0 2px 8px rgba(0,61,76,.06)}
+.kp-t{border-left-color:var(--teal)}.kp-o{border-left-color:var(--orange)}.kp-r{border-left-color:var(--red)}.kp-y{border-left-color:var(--yellow)}
+.kp-l{font-size:10px;font-weight:600;letter-spacing:.7px;text-transform:uppercase;color:var(--t3);margin-bottom:5px}
+.kp-v{font-size:24px;font-weight:700;letter-spacing:-.7px;font-family:'JetBrains Mono',monospace;color:var(--teal-dark)}
+.kp-d{font-size:11px;color:var(--t4);margin-top:2px}
+
+/* SECTION HEADER */
+.sh{display:flex;align-items:center;gap:10px;margin:24px 0 12px}
+.sh:first-child{margin-top:0}
+.sh-t{font-size:11px;font-weight:700;letter-spacing:.8px;text-transform:uppercase;color:var(--teal)}
+.sh-l{flex:1;height:1px;background:var(--gray-light)}
+.sh-c{font-size:10px;color:var(--t4);font-family:'JetBrains Mono',monospace}
+
+/* PRIORITIES */
+.prios{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:24px}
+.pr{background:var(--bg-card);border:1px solid var(--bd);border-radius:var(--r);padding:14px 18px;display:flex;gap:12px;align-items:center;position:relative}
+.pr-n{font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:600;color:#fff;background:var(--teal);width:28px;height:28px;border-radius:7px;display:grid;place-items:center;flex-shrink:0}
+.pr h3{font-size:13.5px;font-weight:600;color:var(--teal-dark)}
+.pr-del{position:absolute;top:6px;right:8px;width:20px;height:20px;border:none;background:transparent;color:var(--t4);font-size:14px;cursor:pointer;border-radius:50%;display:grid;place-items:center;opacity:0;transition:opacity .15s}
+.pr:hover .pr-del{opacity:1}
+.pr-del:hover{color:var(--red);background:var(--s-notok-bg)}
+
+/* INLINE EDITABLE — always on */
+[contenteditable="true"]{outline:none;border-radius:3px;transition:background .15s,box-shadow .15s}
+[contenteditable="true"]:hover{background:rgba(0,97,120,.04)}
+[contenteditable="true"]:focus{background:rgba(0,97,120,.07);box-shadow:0 0 0 2px rgba(0,97,120,.15)}
+
+/* SUMMARY */
+.sums{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.sm{background:var(--bg-card);border:1px solid var(--bd);border-radius:var(--r);padding:16px 18px}
+.sm-t{font-size:12px;font-weight:600;color:var(--teal-dark);margin-bottom:8px;padding-bottom:6px;border-bottom:1px solid var(--gray-bg)}
+.sm-row{display:flex;align-items:center;gap:5px;font-size:12px;font-weight:600;margin-bottom:3px}
+.dot{width:5px;height:5px;border-radius:50%;flex-shrink:0}
+
+/* GROUP */
+.grp{margin-bottom:20px}
+.grp-head{font-size:10px;font-weight:700;letter-spacing:.8px;text-transform:uppercase;padding:6px 0;margin-bottom:6px;display:flex;align-items:center;gap:8px;color:var(--teal-mid)}
+.grp-head .dh{width:8px;height:8px;border-radius:2px}
+
+/* CARDS */
+.trk{display:flex;flex-direction:column;gap:6px}
+.card{background:var(--bg-card);border:1px solid var(--bd);border-radius:var(--r);overflow:hidden;transition:border-color .15s,box-shadow .15s}
+.card:hover{border-color:var(--gray-light);box-shadow:0 1px 4px rgba(0,61,76,.04)}
+.card-top{padding:12px 16px;cursor:pointer;display:flex;align-items:flex-start;gap:10px}
+.card-main{flex:1;min-width:0}
+.card-row1{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:4px}
+.card-id{font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--teal);background:var(--s-progress-bg);padding:1px 6px;border-radius:3px}
+.card-title{font-size:13.5px;font-weight:600;color:var(--teal-dark)}
+.card-row2{display:flex;align-items:center;gap:7px;flex-wrap:wrap}
+
+/* BADGES */
+.b{display:inline-flex;align-items:center;gap:4px;padding:2px 7px;border-radius:4px;font-size:10px;font-weight:600;white-space:nowrap;position:relative;cursor:pointer;user-select:none}
+.b .d{width:4px;height:4px;border-radius:50%;background:currentColor}
+.b:hover{opacity:.8}
+.b-hi{background:var(--pri-high-bg);color:var(--pri-high)}
+.b-med{background:var(--pri-med-bg);color:var(--pri-med)}
+.b-lo{background:var(--pri-low-bg);color:var(--pri-low)}
+.b-in{background:var(--s-progress-bg);color:var(--s-progress)}
+.b-oh{background:var(--s-hold-bg);color:var(--s-hold)}
+.b-ok{background:var(--s-done-bg);color:var(--s-done)}
+.b-no{background:var(--s-notok-bg);color:var(--s-notok)}
+.b-done{background:var(--s-done-bg);color:var(--s-done)}
+
+.dl{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--t3)}
+.dl.ur{color:var(--red)}
+
+.card-chv{color:var(--t4);font-size:11px;transition:transform .2s;padding-top:2px}
+.card.open .card-chv{transform:rotate(180deg)}
+.card-body{max-height:0;overflow:hidden;transition:max-height .3s ease}
+.card.open .card-body{max-height:800px}
+
+.card-detail{padding:0 16px 14px;display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.db{background:var(--gray-bg);border-radius:7px;padding:10px 12px}
+.db.w{grid-column:1/-1}
+.db-l{font-size:9px;font-weight:700;letter-spacing:.7px;text-transform:uppercase;color:var(--teal-mid);margin-bottom:4px}
+.db-t{font-size:12px;line-height:1.6;color:var(--t2);white-space:pre-line}
+
+/* FILTER */
+.fbar{display:flex;gap:5px;margin-bottom:14px;flex-wrap:wrap}
+.fb{padding:4px 11px;border-radius:14px;border:1px solid var(--bd);background:transparent;color:var(--t3);font-family:'DM Sans',sans-serif;font-size:11px;font-weight:500;cursor:pointer;transition:all .15s}
+.fb:hover{border-color:var(--teal-mid);color:var(--teal-dark)}
+.fb.on{background:var(--teal);border-color:var(--teal);color:#fff}
+
+/* TIMELINE */
+.tl-wrap{background:var(--bg-card);border:1px solid var(--bd);border-radius:var(--r);padding:20px 24px}
+.tl-i{display:flex;gap:18px;padding:18px 0;border-bottom:1px solid var(--bd)}
+.tl-i:last-child{border-bottom:none}
+.tl-d{width:80px;flex-shrink:0;text-align:right}
+.tl-day{font-size:24px;font-weight:700;font-family:'JetBrains Mono',monospace;color:var(--teal-dark);line-height:1}
+.tl-mo{font-size:10px;color:var(--teal-mid);text-transform:uppercase;letter-spacing:.4px;margin-top:2px}
+.tl-rail{width:2px;background:var(--gray-light);position:relative;flex-shrink:0}
+.tl-dot{width:10px;height:10px;border-radius:50%;background:var(--teal);border:3px solid var(--bg);position:absolute;top:4px;left:-4px}
+.tl-b{flex:1}.tl-t{font-size:14px;font-weight:600;color:var(--teal-dark);margin-bottom:2px}.tl-s{font-size:12px;color:var(--teal-mid)}
+
+/* CHECKLIST */
+.ck{display:flex;flex-direction:column;gap:5px}
+.ck-r{display:flex;align-items:center;gap:12px;padding:12px 16px;background:var(--bg-card);border:1px solid var(--bd);border-radius:var(--r)}
+.ck-i{width:24px;height:24px;border-radius:50%;display:grid;place-items:center;flex-shrink:0;font-size:11px;font-weight:700}
+.ck-ok{background:var(--s-done-bg);color:var(--s-done)}
+.ck-og{background:var(--s-hold-bg);color:var(--s-hold)}
+.ck-no{background:var(--s-notok-bg);color:var(--s-notok)}
+.ck-t{flex:1}.ck-t h4{font-size:13px;font-weight:600;color:var(--teal-dark)}.ck-t p{font-size:11px;color:var(--teal-mid);margin-top:1px}
+.ck-st{font-size:10px;font-weight:700;letter-spacing:.3px;text-transform:uppercase;flex-shrink:0}
+
+/* GOALS MATRIX */
+.goals-matrix{width:100%;border-collapse:separate;border-spacing:0;background:var(--bg-card);border:1px solid var(--bd);border-radius:var(--r);overflow:hidden}
+.goals-matrix thead th{background:var(--teal-dark);color:#fff;font-size:11px;font-weight:700;letter-spacing:.6px;text-transform:uppercase;padding:12px 16px;text-align:center;border-right:1px solid rgba(255,255,255,.1)}
+.goals-matrix thead th:first-child{text-align:left;min-width:200px;border-right:1px solid rgba(255,255,255,.15)}
+.goals-matrix thead th:last-child{border-right:none}
+.goals-matrix thead th.q-current{background:var(--teal)}
+.goals-matrix tbody tr{border-bottom:1px solid var(--bd)}
+.goals-matrix tbody tr:last-child{border-bottom:none}
+.goals-matrix tbody td{padding:14px 16px;vertical-align:top;border-right:1px solid var(--bd);font-size:12px;line-height:1.65;color:var(--t2)}
+.goals-matrix tbody td:first-child{border-right:1px solid var(--bd);background:var(--gray-bg)}
+.goals-matrix tbody td:last-child{border-right:none}
+.goals-matrix tbody td.q-cur{background:rgba(0,97,120,.04)}
+.goals-matrix .gm-name{font-size:13px;font-weight:700;color:var(--teal-dark);margin-bottom:4px}
+.goals-matrix .gm-kpi{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--teal-mid);line-height:1.5}
+
+/* ADD BUTTON — always visible */
+.add-btn{width:100%;padding:10px;border:1px dashed var(--gray-mid);border-radius:var(--r);background:transparent;color:var(--teal-mid);font-family:'DM Sans',sans-serif;font-size:12px;font-weight:500;cursor:pointer;transition:all .15s;margin-top:8px}
+.add-btn:hover{border-color:var(--teal);color:var(--teal);background:var(--s-progress-bg)}
+
+/* BADGE DROPDOWN */
+.badge-dd{position:absolute;top:calc(100% + 4px);left:0;background:#fff;border:1px solid var(--bd);border-radius:8px;box-shadow:0 4px 16px rgba(0,61,76,.12);padding:4px;z-index:50;min-width:120px}
+.badge-dd button{display:flex;align-items:center;gap:6px;width:100%;padding:6px 10px;border:none;background:transparent;font-family:'DM Sans',sans-serif;font-size:11px;font-weight:500;cursor:pointer;border-radius:5px;color:var(--t1);transition:background .1s}
+.badge-dd button:hover{background:var(--gray-bg)}
+.badge-dd .bdd{width:6px;height:6px;border-radius:50%}
+
+/* RESPONSIVE */
+@media(max-width:1024px){.kpis{grid-template-columns:repeat(2,1fr)}.prios{grid-template-columns:1fr}.sums{grid-template-columns:1fr}.card-detail{grid-template-columns:1fr}.goals-matrix{display:block;overflow-x:auto}}
+@media(max-width:768px){.top-in,.nav,.main{padding-left:16px;padding-right:16px}.kpis{grid-template-columns:1fr}.tl-d{width:60px}}
+</style>
+</head>
+<body>
+<div class="top">
+  <div class="top-in">
+    <div class="logo">
+      <img class="logo-img" src="data:image/png;base64,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" alt="Raíx">
+      <div class="logo-sep"></div>
+      <small>Issues List & Key Projects</small>
+    </div>
+    <div class="top-r">
+      <div class="date-tag" contenteditable="true">Mar 23, 2026</div>
+    </div>
+  </div>
+</div>
+<div class="nav-wrap">
+  <nav class="nav">
+    <button class="on" data-t="overview">Overview</button>
+    <button data-t="issues">Issues<span class="ct">6</span></button>
+    <button data-t="projects">Key Projects<span class="ct">11</span></button>
+    <button data-t="radar">On the Radar<span class="ct">22</span></button>
+    <button data-t="agenda">Agenda<span class="ct">4</span></button>
+    <button data-t="checklist">PortCo Checklist</button>
+    <button data-t="goals">Annual Goals<span class="ct">6</span></button>
+  </nav>
+</div>
+
+<div class="main">
+
+<!-- ═══ OVERVIEW ═══ -->
+<div class="tab on" id="overview">
+  <div class="kpis">
+    <div class="kp kp-t"><div class="kp-l">Sales + Orders</div><div class="kp-v" contenteditable="true" style="color:var(--teal)">R$54.3m</div><div class="kp-d" contenteditable="true">74% of budget</div></div>
+    <div class="kp kp-o"><div class="kp-l">Cash Need FY26</div><div class="kp-v" contenteditable="true" style="color:var(--orange)">R$21.6m</div><div class="kp-d" contenteditable="true">Free Cash Flow</div></div>
+    <div class="kp kp-r"><div class="kp-l">Credit Lines</div><div class="kp-v" contenteditable="true" style="color:var(--red)">R$10.8m</div><div class="kp-d" contenteditable="true">Liquidity</div></div>
+    <div class="kp kp-y"><div class="kp-l">Raw Material</div><div class="kp-v" contenteditable="true" style="color:var(--yellow)">R$20.7m</div><div class="kp-d" contenteditable="true">Field commitments</div></div>
+  </div>
+  <div class="sh"><div class="sh-t">Priorities for the Week</div><div class="sh-l"></div></div>
+  <div class="prios" id="prio-list">
+    <div class="pr"><div class="pr-n">1</div><h3 contenteditable="true">Manage Marcelo &amp; Ivo work</h3><button class="pr-del" onclick="this.closest('.pr').remove();renumberPrios()" title="Remove">×</button></div>
+    <div class="pr"><div class="pr-n">2</div><h3 contenteditable="true">Cascade reforecast into monthly goals</h3><button class="pr-del" onclick="this.closest('.pr').remove();renumberPrios()" title="Remove">×</button></div>
+    <div class="pr"><div class="pr-n">3</div><h3 contenteditable="true">FP&amp;A interviews</h3><button class="pr-del" onclick="this.closest('.pr').remove();renumberPrios()" title="Remove">×</button></div>
+    <div class="pr"><div class="pr-n">4</div><h3 contenteditable="true">Advance on legal topics</h3><button class="pr-del" onclick="this.closest('.pr').remove();renumberPrios()" title="Remove">×</button></div>
+  </div>
+  <button class="add-btn" onclick="addPriority()">+ Add priority</button>
+
+  <div class="sh" style="margin-top:24px"><div class="sh-t">Summary</div><div class="sh-l"></div></div>
+  <div class="sums">
+    <div class="sm"><div class="sm-t">Key Projects</div><div class="sm-row"><div class="dot" style="background:var(--teal)"></div><span style="color:var(--teal)">9 In Progress</span></div><div style="font-size:11px;color:var(--t4);margin-top:4px">All High priority</div></div>
+    <div class="sm"><div class="sm-t">Watchlist</div><div class="sm-row"><div class="dot" style="background:var(--teal)"></div><span style="color:var(--teal)">2 In Progress</span></div><div style="font-size:11px;color:var(--t4);margin-top:4px">M&amp;A and LTVCP</div></div>
+    <div class="sm"><div class="sm-t">PortCo Checklist</div><div class="sm-row"><div class="dot" style="background:var(--s-done)"></div><span style="color:var(--s-done)">7 OK</span></div><div class="sm-row"><div class="dot" style="background:var(--yellow)"></div><span style="color:var(--yellow)">2 Ongoing</span></div><div class="sm-row"><div class="dot" style="background:var(--red)"></div><span style="color:var(--red)">1 Not OK</span></div></div>
+  </div>
+</div>
+
+<!-- ═══ ISSUES ═══ -->
+<div class="tab" id="issues">
+  <div class="sh"><div class="sh-t">Issues List</div><div class="sh-l"></div><div class="sh-c">6 items</div></div>
+  <div class="fbar" data-filter-tab="issues"><button class="fb on" data-fp="all">All</button><button class="fb" data-fp="high">High</button><button class="fb" data-fp="medium">Medium</button><button class="fb" data-fp="low">Low</button></div>
+
+  <div class="grp"><div class="grp-head"><div class="dh" style="background:var(--teal)"></div>Finance</div><div class="trk" id="trk-finance">
+    <div class="card" data-priority="high"><div class="card-top" onclick="t(this)"><div class="card-main"><div class="card-row1"><span class="card-title" contenteditable="true">Liquidity and capital structure</span></div><div class="card-row2"><span class="b b-hi b-pri" data-val="high"><span class="d"></span>High</span><span class="b b-in b-stat" data-val="in"><span class="d"></span>In progress</span><span class="dl" contenteditable="true">ASAP</span></div></div><div class="card-chv">&#9662;</div></div><div class="card-body"><div class="card-detail"><div class="db"><div class="db-l">Current Status</div><div class="db-t" contenteditable="true">~R$10.8m in credit lines available. Focus on securing liquidity and optimizing capital structure.</div></div><div class="db"><div class="db-l">Next Steps</div><div class="db-t" contenteditable="true">Continue negotiations with banks to expand credit facilities.</div></div></div></div></div>
+  </div></div>
+
+  <div class="grp"><div class="grp-head"><div class="dh" style="background:var(--orange)"></div>Commercial</div><div class="trk" id="trk-commercial">
+    <div class="card" data-priority="high"><div class="card-top" onclick="t(this)"><div class="card-main"><div class="card-row1"><span class="card-title" contenteditable="true">Make the numbers</span></div><div class="card-row2"><span class="b b-hi b-pri" data-val="high"><span class="d"></span>High</span><span class="b b-in b-stat" data-val="in"><span class="d"></span>In progress</span><span class="dl" contenteditable="true">Aug 31, 2026</span></div></div><div class="card-chv">&#9662;</div></div><div class="card-body"><div class="card-detail"><div class="db w"><div class="db-l">Current Status</div><div class="db-t" contenteditable="true">R$54.3m in Sales + Orders; 74% of budget. Continued push needed to close the gap.</div></div></div></div></div>
+    <div class="card" data-priority="high"><div class="card-top" onclick="t(this)"><div class="card-main"><div class="card-row1"><span class="card-title" contenteditable="true">Commercial Strategy Review</span></div><div class="card-row2"><span class="b b-hi b-pri" data-val="high"><span class="d"></span>High</span><span class="b b-in b-stat" data-val="in"><span class="d"></span>In progress</span><span class="dl" contenteditable="true">Q2 2026</span></div></div><div class="card-chv">&#9662;</div></div><div class="card-body"><div class="card-detail"><div class="db"><div class="db-l">Current Status</div><div class="db-t" contenteditable="true">Finalizing Dantas Carneiro engagement. LEK advisory scheduled for Q2.</div></div><div class="db"><div class="db-l">Next Steps</div><div class="db-t" contenteditable="true">Close Dantas Carneiro hiring and begin LEK commercial strategy review.</div></div></div></div></div>
+  </div></div>
+
+  <div class="grp"><div class="grp-head"><div class="dh" style="background:var(--red)"></div>Seed Production / Operations</div><div class="trk" id="trk-ops">
+    <div class="card" data-priority="high"><div class="card-top" onclick="t(this)"><div class="card-main"><div class="card-row1"><span class="card-title" contenteditable="true">Raw material and field commitments</span></div><div class="card-row2"><span class="b b-hi b-pri" data-val="high"><span class="d"></span>High</span><span class="b b-in b-stat" data-val="in"><span class="d"></span>In progress</span><span class="dl" contenteditable="true">Ongoing</span></div></div><div class="card-chv">&#9662;</div></div><div class="card-body"><div class="card-detail"><div class="db w"><div class="db-l">Current Status</div><div class="db-t" contenteditable="true">Raw Material projections at R$20.7m. Monitoring field commitments and supply chain.</div></div></div></div></div>
+    <div class="card" data-priority="high"><div class="card-top" onclick="t(this)"><div class="card-main"><div class="card-row1"><span class="card-title" contenteditable="true">Inventory Quality</span></div><div class="card-row2"><span class="b b-hi b-pri" data-val="high"><span class="d"></span>High</span><span class="b b-in b-stat" data-val="in"><span class="d"></span>In progress</span><span class="dl ur" contenteditable="true">ASAP</span></div></div><div class="card-chv">&#9662;</div></div><div class="card-body"><div class="card-detail"><div class="db w"><div class="db-l">Current Status</div><div class="db-t" contenteditable="true">Physical audit ongoing. Positive feedback thus far.</div></div></div></div></div>
+  </div></div>
+
+  <div class="grp"><div class="grp-head"><div class="dh" style="background:var(--yellow)"></div>Business Model</div><div class="trk" id="trk-business">
+    <div class="card" data-priority="high"><div class="card-top" onclick="t(this)"><div class="card-main"><div class="card-row1"><span class="card-title" contenteditable="true">Business Model Review</span></div><div class="card-row2"><span class="b b-hi b-pri" data-val="high"><span class="d"></span>High</span><span class="b b-in b-stat" data-val="in"><span class="d"></span>In progress</span><span class="dl ur" contenteditable="true">ASAP</span></div></div><div class="card-chv">&#9662;</div></div><div class="card-body"><div class="card-detail"><div class="db w"><div class="db-l">Current Status</div><div class="db-t" contenteditable="true">Q2 goal. Comprehensive review underway.</div></div></div></div></div>
+  </div></div>
+  <button class="add-btn" onclick="addCard('trk-business')">+ Add issue</button>
+</div>
+
+<!-- ═══ KEY PROJECTS ═══ -->
+<div class="tab" id="projects">
+  <div class="sh"><div class="sh-t">Key Projects</div><div class="sh-l"></div><div class="sh-c">9</div></div>
+  <div class="fbar" data-filter-tab="projects"><button class="fb on" data-fp="all">All</button><button class="fb" data-fp="high">High</button><button class="fb" data-fp="medium">Medium</button><button class="fb" data-fp="low">Low</button><span style="width:1px;height:18px;background:var(--bd);margin:0 4px"></span><button class="fb" data-fd="asap">ASAP</button><button class="fb" data-fd="q1">Q1</button><button class="fb" data-fd="q2">Q2</button><button class="fb" data-fd="q3">Q3</button></div>
+  <div class="trk" id="pl">
+    <div class="card" data-priority="high" data-dl="na"><div class="card-top" onclick="t(this)"><div class="card-main"><div class="card-row1"><span class="card-id">KP-01</span><span class="card-title" contenteditable="true">Commercial Excellence</span></div><div class="card-row2"><span class="b b-hi b-pri" data-val="high"><span class="d"></span>High</span><span class="b b-in b-stat" data-val="in"><span class="d"></span>In progress</span></div></div><div class="card-chv">&#9662;</div></div><div class="card-body"><div class="card-detail"><div class="db"><div class="db-l">Current Status</div><div class="db-t" contenteditable="true">R$54.3m in Sales + Orders; 74% of budget.</div></div><div class="db"><div class="db-l">Next Steps</div><div class="db-t" contenteditable="true">Continue commercial campaigns.</div></div></div></div></div>
+    <div class="card" data-priority="high" data-dl="asap"><div class="card-top" onclick="t(this)"><div class="card-main"><div class="card-row1"><span class="card-id">KP-02</span><span class="card-title" contenteditable="true">Single Seed Sales</span></div><div class="card-row2"><span class="b b-hi b-pri" data-val="high"><span class="d"></span>High</span><span class="b b-in b-stat" data-val="in"><span class="d"></span>In progress</span><span class="dl ur">ASAP</span></div></div><div class="card-chv">&#9662;</div></div><div class="card-body"><div class="card-detail"><div class="db w"><div class="db-l">Current Status</div><div class="db-t" contenteditable="true">Sales ongoing.</div></div></div></div></div>
+    <div class="card" data-priority="high" data-dl="q3"><div class="card-top" onclick="t(this)"><div class="card-main"><div class="card-row1"><span class="card-id">KP-03</span><span class="card-title" contenteditable="true">Free Cash Flow</span></div><div class="card-row2"><span class="b b-hi b-pri" data-val="high"><span class="d"></span>High</span><span class="b b-in b-stat" data-val="in"><span class="d"></span>In progress</span><span class="dl" contenteditable="true">Q3 26</span></div></div><div class="card-chv">&#9662;</div></div><div class="card-body"><div class="card-detail"><div class="db w"><div class="db-l">Current Status</div><div class="db-t" contenteditable="true">Cash need at R$21.6m FY26.</div></div></div></div></div>
+    <div class="card" data-priority="high" data-dl="q1"><div class="card-top" onclick="t(this)"><div class="card-main"><div class="card-row1"><span class="card-id">KP-04</span><span class="card-title" contenteditable="true">SG&amp;A Resizing</span></div><div class="card-row2"><span class="b b-hi b-pri" data-val="high"><span class="d"></span>High</span><span class="b b-in b-stat" data-val="in"><span class="d"></span>In progress</span><span class="dl" contenteditable="true">Q1 26</span></div></div><div class="card-chv">&#9662;</div></div><div class="card-body"><div class="card-detail"><div class="db w"><div class="db-l">Current Status</div><div class="db-t" contenteditable="true">Reforecast additional cuts to be done.</div></div></div></div></div>
+    <div class="card" data-priority="high" data-dl="asap"><div class="card-top" onclick="t(this)"><div class="card-main"><div class="card-row1"><span class="card-id">KP-05</span><span class="card-title" contenteditable="true">People Management</span></div><div class="card-row2"><span class="b b-hi b-pri" data-val="high"><span class="d"></span>High</span><span class="b b-in b-stat" data-val="in"><span class="d"></span>In progress</span><span class="dl ur">ASAP</span></div></div><div class="card-chv">&#9662;</div></div><div class="card-body"><div class="card-detail"><div class="db w"><div class="db-l">Current Status</div><div class="db-t" contenteditable="true">Key topics: (1) addressing Ivonei Dalla's emotional instability; (2) Ops team reorganization.</div></div></div></div></div>
+    <div class="card" data-priority="high" data-dl="q1"><div class="card-top" onclick="t(this)"><div class="card-main"><div class="card-row1"><span class="card-id">KP-06</span><span class="card-title" contenteditable="true">Hire FP&amp;A</span></div><div class="card-row2"><span class="b b-hi b-pri" data-val="high"><span class="d"></span>High</span><span class="b b-in b-stat" data-val="in"><span class="d"></span>In progress</span><span class="dl" contenteditable="true">Q1 26</span></div></div><div class="card-chv">&#9662;</div></div><div class="card-body"><div class="card-detail"><div class="db w"><div class="db-l">Current Status</div><div class="db-t" contenteditable="true">Ensure Thamy engagement.</div></div></div></div></div>
+    <div class="card" data-priority="high" data-dl="q2"><div class="card-top" onclick="t(this)"><div class="card-main"><div class="card-row1"><span class="card-id">KP-07</span><span class="card-title" contenteditable="true">Reforecast</span></div><div class="card-row2"><span class="b b-hi b-pri" data-val="high"><span class="d"></span>High</span><span class="b b-in b-stat" data-val="in"><span class="d"></span>In progress</span><span class="dl" contenteditable="true">Q2 26</span></div></div><div class="card-chv">&#9662;</div></div><div class="card-body"><div class="card-detail"><div class="db w"><div class="db-l">Current Status</div><div class="db-t" contenteditable="true">Cascade into structures.</div></div></div></div></div>
+    <div class="card" data-priority="high" data-dl="q1"><div class="card-top" onclick="t(this)"><div class="card-main"><div class="card-row1"><span class="card-id">KP-08</span><span class="card-title" contenteditable="true">Industry Planning</span></div><div class="card-row2"><span class="b b-hi b-pri" data-val="high"><span class="d"></span>High</span><span class="b b-in b-stat" data-val="in"><span class="d"></span>In progress</span><span class="dl" contenteditable="true">Q1 26</span></div></div><div class="card-chv">&#9662;</div></div><div class="card-body"><div class="card-detail"><div class="db w"><div class="db-l">Current Status</div><div class="db-t" contenteditable="true">Ensure sales delivery.</div></div></div></div></div>
+    <div class="card" data-priority="high" data-dl="q2"><div class="card-top" onclick="t(this)"><div class="card-main"><div class="card-row1"><span class="card-id">KP-09</span><span class="card-title" contenteditable="true">Origination</span></div><div class="card-row2"><span class="b b-hi b-pri" data-val="high"><span class="d"></span>High</span><span class="b b-in b-stat" data-val="in"><span class="d"></span>In progress</span><span class="dl" contenteditable="true">Q2 26</span></div></div><div class="card-chv">&#9662;</div></div><div class="card-body"><div class="card-detail"><div class="db w"><div class="db-l">Current Status</div><div class="db-t" contenteditable="true">Need to have more visibility on next steps.</div></div></div></div></div>
+  </div>
+  <button class="add-btn" onclick="addCard('pl')">+ Add project</button>
+
+  <div class="sh" style="margin-top:32px"><div class="sh-t">Watchlist</div><div class="sh-l"></div><div class="sh-c">2</div></div>
+  <div class="trk" id="trk-watchlist">
+    <div class="card" data-priority="low"><div class="card-top" onclick="t(this)"><div class="card-main"><div class="card-row1"><span class="card-title" contenteditable="true">M&amp;A</span></div><div class="card-row2"><span class="b b-lo b-pri" data-val="low"><span class="d"></span>Low</span><span class="b b-in b-stat" data-val="in"><span class="d"></span>In progress</span></div></div><div class="card-chv">&#9662;</div></div><div class="card-body"><div class="card-detail"><div class="db w"><div class="db-l">Current Status</div><div class="db-t" contenteditable="true">Schedule Priorizi visit. Await for Ivonar to call Guilherme.</div></div></div></div></div>
+    <div class="card" data-priority="low"><div class="card-top" onclick="t(this)"><div class="card-main"><div class="card-row1"><span class="card-title" contenteditable="true">LTVCP</span></div><div class="card-row2"><span class="b b-lo b-pri" data-val="low"><span class="d"></span>Low</span><span class="b b-in b-stat" data-val="in"><span class="d"></span>In progress</span></div></div><div class="card-chv">&#9662;</div></div><div class="card-body"><div class="card-detail"><div class="db w"><div class="db-l">Current Status</div><div class="db-t" contenteditable="true">Q2.</div></div></div></div></div>
+  </div>
+  <button class="add-btn" onclick="addCard('trk-watchlist')">+ Add to watchlist</button>
+</div>
+
+<!-- ═══ ON THE RADAR ═══ -->
+<div class="tab" id="radar">
+  <div class="sh"><div class="sh-t">On the Radar</div><div class="sh-l"></div><div class="sh-c">22 items</div></div>
+  <div class="fbar" id="rf"><button class="fb on" data-r="all">All</button><button class="fb" data-r="shareholders">Shareholders</button><button class="fb" data-r="ops">Ops</button><button class="fb" data-r="people">People</button><button class="fb" data-r="legal">Legal</button><button class="fb" data-r="compliance">Compliance</button><button class="fb" data-r="tax">Tax &amp; Finance</button></div>
+
+  <div class="grp" data-rc="shareholders"><div class="grp-head"><div class="dh" style="background:var(--teal-dark)"></div>Shareholders</div><div class="trk" id="trk-sh">
+    <div class="card"><div class="card-top" onclick="t(this)"><div class="card-main"><div class="card-row1"><span class="card-title" contenteditable="true">Cash Out</span></div><div class="card-row2"><span class="b b-in b-stat" data-val="in"><span class="d"></span>In progress</span></div></div><div class="card-chv">&#9662;</div></div><div class="card-body"><div class="card-detail"><div class="db w"><div class="db-l">Current Status</div><div class="db-t" contenteditable="true">All shareholders aware of payment date.</div></div></div></div></div>
+    <div class="card"><div class="card-top" onclick="t(this)"><div class="card-main"><div class="card-row1"><span class="card-title" contenteditable="true">CEO Letter</span></div><div class="card-row2"><span class="b b-in b-stat" data-val="in"><span class="d"></span>In progress</span></div></div><div class="card-chv">&#9662;</div></div><div class="card-body"><div class="card-detail"><div class="db w"><div class="db-l">Current Status</div><div class="db-t" contenteditable="true">Dalla to send this month's CEO Letter.</div></div></div></div></div>
+    <div class="card"><div class="card-top" onclick="t(this)"><div class="card-main"><div class="card-row1"><span class="card-title" contenteditable="true">Conta Gráfica</span></div><div class="card-row2"><span class="b b-in b-stat" data-val="in"><span class="d"></span>In progress</span></div></div><div class="card-chv">&#9662;</div></div><div class="card-body"><div class="card-detail"><div class="db w"><div class="db-l">Current Status</div><div class="db-t" contenteditable="true">Refining with Bernadete to send.</div></div></div></div></div>
+  </div><button class="add-btn" onclick="addCard('trk-sh')">+ Add</button></div>
+
+  <div class="grp" data-rc="ops"><div class="grp-head"><div class="dh" style="background:var(--red)"></div>Ops</div><div class="trk" id="trk-ro">
+    <div class="card"><div class="card-top" onclick="t(this)"><div class="card-main"><div class="card-row1"><span class="card-title" contenteditable="true">KPIs</span></div><div class="card-row2"><span class="b b-in b-stat" data-val="in"><span class="d"></span>In progress</span></div></div><div class="card-chv">&#9662;</div></div><div class="card-body"><div class="card-detail"><div class="db w"><div class="db-l">Current Status</div><div class="db-t" contenteditable="true">Template to be created.</div></div></div></div></div>
+    <div class="card"><div class="card-top" onclick="t(this)"><div class="card-main"><div class="card-row1"><span class="card-title" contenteditable="true">Report semanal Prod Sem.</span></div><div class="card-row2"><span class="b b-in b-stat" data-val="in"><span class="d"></span>In progress</span></div></div><div class="card-chv">&#9662;</div></div><div class="card-body"><div class="card-detail"><div class="db w"><div class="db-l">Current Status</div><div class="db-t" contenteditable="true">Await for first draft.</div></div></div></div></div>
+    <div class="card"><div class="card-top" onclick="t(this)"><div class="card-main"><div class="card-row1"><span class="card-title" contenteditable="true">Recursos EcoInvest</span></div><div class="card-row2"><span class="b b-in b-stat" data-val="in"><span class="d"></span>In progress</span></div></div><div class="card-chv">&#9662;</div></div><div class="card-body"><div class="card-detail"><div class="db w"><div class="db-l">Current Status</div><div class="db-t" contenteditable="true">No updates thus far. Weekly F-up on David.</div></div></div></div></div>
+    <div class="card"><div class="card-top" onclick="t(this)"><div class="card-main"><div class="card-row1"><span class="card-title" contenteditable="true">Recursos Finep</span></div><div class="card-row2"><span class="b b-in b-stat" data-val="in"><span class="d"></span>In progress</span></div></div><div class="card-chv">&#9662;</div></div><div class="card-body"><div class="card-detail"><div class="db w"><div class="db-l">Current Status</div><div class="db-t" contenteditable="true">David introduced potential line. Nevair hired a consultant to help create the pitch.</div></div></div></div></div>
+  </div><button class="add-btn" onclick="addCard('trk-ro')">+ Add</button></div>
+
+  <div class="grp" data-rc="people"><div class="grp-head"><div class="dh" style="background:var(--teal)"></div>People</div><div class="trk" id="trk-rp">
+    <div class="card"><div class="card-top" onclick="t(this)"><div class="card-main"><div class="card-row1"><span class="card-title" contenteditable="true">Hire FP&amp;A</span></div><div class="card-row2"><span class="b b-in b-stat" data-val="in"><span class="d"></span>In progress</span></div></div><div class="card-chv">&#9662;</div></div><div class="card-body"><div class="card-detail"><div class="db w"><div class="db-l">Current Status</div><div class="db-t" contenteditable="true">Interviews ongoing.</div></div></div></div></div>
+    <div class="card"><div class="card-top" onclick="t(this)"><div class="card-main"><div class="card-row1"><span class="card-title" contenteditable="true">Dantas Carneiro</span></div><div class="card-row2"><span class="b b-in b-stat" data-val="in"><span class="d"></span>In progress</span></div></div><div class="card-chv">&#9662;</div></div><div class="card-body"><div class="card-detail"><div class="db w"><div class="db-l">Next Steps</div><div class="db-t" contenteditable="true">Finalize engagement.</div></div></div></div></div>
+  </div><button class="add-btn" onclick="addCard('trk-rp')">+ Add</button></div>
+
+  <div class="grp" data-rc="legal"><div class="grp-head"><div class="dh" style="background:var(--yellow)"></div>Legal</div><div class="trk" id="trk-rl">
+    <div class="card"><div class="card-top" onclick="t(this)"><div class="card-main"><div class="card-row1"><span class="card-title" contenteditable="true">Contrato Prestação Serviços Nevair</span></div><div class="card-row2"><span class="b b-in b-stat" data-val="in"><span class="d"></span>In progress</span></div></div><div class="card-chv">&#9662;</div></div><div class="card-body"><div class="card-detail"><div class="db w"><div class="db-l">Next Steps</div><div class="db-t" contenteditable="true">Nevair to analyze the contract.</div></div></div></div></div>
+    <div class="card"><div class="card-top" onclick="t(this)"><div class="card-main"><div class="card-row1"><span class="card-title" contenteditable="true">Re-ratificação bônus subscrição</span></div><div class="card-row2"><span class="b b-oh b-stat" data-val="oh"><span class="d"></span>On hold</span></div></div><div class="card-chv">&#9662;</div></div><div class="card-body"><div class="card-detail"><div class="db w"><div class="db-l">Current Status</div><div class="db-t" contenteditable="true">Document OK, awaiting board member for DocuSign + BOD replacement.</div></div></div></div></div>
+    <div class="card"><div class="card-top" onclick="t(this)"><div class="card-main"><div class="card-row1"><span class="card-title" contenteditable="true">AGE saída Osmar</span></div><div class="card-row2"><span class="b b-oh b-stat" data-val="oh"><span class="d"></span>On hold</span></div></div><div class="card-chv">&#9662;</div></div><div class="card-body"><div class="card-detail"><div class="db w"><div class="db-l">Current Status</div><div class="db-t" contenteditable="true">Waiting to find new BOD member.</div></div></div></div></div>
+    <div class="card"><div class="card-top" onclick="t(this)"><div class="card-main"><div class="card-row1"><span class="card-title" contenteditable="true">Ajuste contratos CLT</span></div><div class="card-row2"><span class="b b-in b-stat" data-val="in"><span class="d"></span>In progress</span></div></div><div class="card-chv">&#9662;</div></div><div class="card-body"><div class="card-detail"><div class="db w"><div class="db-l">Next Steps</div><div class="db-t" contenteditable="true">Bernadete to send e-mail with law firm.</div></div></div></div></div>
+    <div class="card"><div class="card-top" onclick="t(this)"><div class="card-main"><div class="card-row1"><span class="card-title" contenteditable="true">SOP Contracts: Dalla &amp; Nevair</span></div><div class="card-row2"><span class="b b-in b-stat" data-val="in"><span class="d"></span>In progress</span></div></div><div class="card-chv">&#9662;</div></div><div class="card-body"><div class="card-detail"><div class="db w"><div class="db-l">Next Steps</div><div class="db-t" contenteditable="true">Finalize minutes for final review.</div></div></div></div></div>
+    <div class="card"><div class="card-top" onclick="t(this)"><div class="card-main"><div class="card-row1"><span class="card-title" contenteditable="true">Contrato Prestação Serviços Dantas</span></div><div class="card-row2"><span class="b b-in b-stat" data-val="in"><span class="d"></span>In progress</span></div></div><div class="card-chv">&#9662;</div></div><div class="card-body"><div class="card-detail"><div class="db w"><div class="db-l">Next Steps</div><div class="db-t" contenteditable="true">Finalize conversations with Dalla to hire.</div></div></div></div></div>
+    <div class="card"><div class="card-top" onclick="t(this)"><div class="card-main"><div class="card-row1"><span class="card-title" contenteditable="true">Redução nº de Conselheiros</span></div><div class="card-row2"><span class="b b-in b-stat" data-val="in"><span class="d"></span>In progress</span></div></div><div class="card-chv">&#9662;</div></div><div class="card-body"><div class="card-detail"><div class="db w"><div class="db-l">Next Steps</div><div class="db-t" contenteditable="true">Aguardar minutas Bernadete.</div></div></div></div></div>
+    <div class="card"><div class="card-top" onclick="t(this)"><div class="card-main"><div class="card-row1"><span class="card-title" contenteditable="true">Relatório Legal Q1</span></div><div class="card-row2"><span class="b b-in b-stat" data-val="in"><span class="d"></span>In progress</span><span class="dl ur" contenteditable="true">Apr 05, 2026</span></div></div><div class="card-chv">&#9662;</div></div><div class="card-body"><div class="card-detail"><div class="db w"><div class="db-l">Next Steps</div><div class="db-t" contenteditable="true">Prepare and deliver Q1 Legal Report.</div></div></div></div></div>
+    <div class="card"><div class="card-top" onclick="t(this)"><div class="card-main"><div class="card-row1"><span class="card-title" contenteditable="true">Relatório Legal Anual</span></div><div class="card-row2"><span class="b b-in b-stat" data-val="in"><span class="d"></span>In progress</span><span class="dl" contenteditable="true">May 08, 2026</span></div></div><div class="card-chv">&#9662;</div></div><div class="card-body"><div class="card-detail"><div class="db w"><div class="db-l">Next Steps</div><div class="db-t" contenteditable="true">Prepare Annual Legal Report.</div></div></div></div></div>
+  </div><button class="add-btn" onclick="addCard('trk-rl')">+ Add</button></div>
+
+  <div class="grp" data-rc="compliance"><div class="grp-head"><div class="dh" style="background:var(--orange)"></div>Compliance</div><div class="trk" id="trk-rc">
+    <div class="card"><div class="card-top" onclick="t(this)"><div class="card-main"><div class="card-row1"><span class="card-title" contenteditable="true">Canal de Denúncias</span></div><div class="card-row2"><span class="b b-in b-stat" data-val="in"><span class="d"></span>In progress</span></div></div><div class="card-chv">&#9662;</div></div><div class="card-body"><div class="card-detail"><div class="db w"><div class="db-l">Next Steps</div><div class="db-t" contenteditable="true">F-up Nevair.</div></div></div></div></div>
+    <div class="card"><div class="card-top" onclick="t(this)"><div class="card-main"><div class="card-row1"><span class="card-title" contenteditable="true">Compliance Practices</span></div><div class="card-row2"><span class="b b-in b-stat" data-val="in"><span class="d"></span>In progress</span></div></div><div class="card-chv">&#9662;</div></div><div class="card-body"><div class="card-detail"><div class="db w"><div class="db-l">Next Steps</div><div class="db-t" contenteditable="true">F-up Nevair.</div></div></div></div></div>
+  </div><button class="add-btn" onclick="addCard('trk-rc')">+ Add</button></div>
+
+  <div class="grp" data-rc="tax"><div class="grp-head"><div class="dh" style="background:var(--teal-dark)"></div>Tax &amp; Finance</div><div class="trk" id="trk-rt">
+    <div class="card"><div class="card-top" onclick="t(this)"><div class="card-main"><div class="card-row1"><span class="card-title" contenteditable="true">Reforma tributária</span></div><div class="card-row2"><span class="b b-in b-stat" data-val="in"><span class="d"></span>In progress</span></div></div><div class="card-chv">&#9662;</div></div><div class="card-body"><div class="card-detail"><div class="db w"><div class="db-l">Current Status</div><div class="db-t" contenteditable="true">Dome hired to standardize for 2027 rules.</div></div></div></div></div>
+    <div class="card"><div class="card-top" onclick="t(this)"><div class="card-main"><div class="card-row1"><span class="card-title" contenteditable="true">Auditoria</span></div><div class="card-row2"><span class="b b-in b-stat" data-val="in"><span class="d"></span>In progress</span></div></div><div class="card-chv">&#9662;</div></div><div class="card-body"><div class="card-detail"><div class="db w"><div class="db-l">Current Status</div><div class="db-t" contenteditable="true">No red flags thus far.</div></div></div></div></div>
+    <div class="card"><div class="card-top" onclick="t(this)"><div class="card-main"><div class="card-row1"><span class="card-title" contenteditable="true">Risk Matrix</span></div><div class="card-row2"><span class="b b-oh b-stat" data-val="oh"><span class="d"></span>On hold</span></div></div><div class="card-chv">&#9662;</div></div><div class="card-body"><div class="card-detail"><div class="db w"><div class="db-l">Next Steps</div><div class="db-t" contenteditable="true">Nevair to initiate.</div></div></div></div></div>
+    <div class="card"><div class="card-top" onclick="t(this)"><div class="card-main"><div class="card-row1"><span class="card-title" contenteditable="true">D&amp;O</span></div><div class="card-row2"><span class="b b-in b-stat" data-val="in"><span class="d"></span>In progress</span></div></div><div class="card-chv">&#9662;</div></div><div class="card-body"><div class="card-detail"><div class="db w"><div class="db-l">Current Status</div><div class="db-t" contenteditable="true">Providers sent to Nevair. Management didn't engage.</div></div></div></div></div>
+  </div><button class="add-btn" onclick="addCard('trk-rt')">+ Add</button></div>
+</div>
+
+<!-- ═══ AGENDA ═══ -->
+<div class="tab" id="agenda">
+  <div class="sh"><div class="sh-t">Upcoming Agenda</div><div class="sh-l"></div></div>
+  <div class="tl-wrap">
+    <div class="tl-i"><div class="tl-d"><div class="tl-day" contenteditable="true">14</div><div class="tl-mo" contenteditable="true">Apr 2026</div></div><div class="tl-rail"><div class="tl-dot"></div></div><div class="tl-b"><div class="tl-t" contenteditable="true">Internal</div><div class="tl-s" contenteditable="true">Key projects &amp; issues list</div></div></div>
+    <div class="tl-i"><div class="tl-d"><div class="tl-day" contenteditable="true">30</div><div class="tl-mo" contenteditable="true">Apr 2026</div></div><div class="tl-rail"><div class="tl-dot" style="background:var(--orange)"></div></div><div class="tl-b"><div class="tl-t" contenteditable="true">EE &amp; EF</div><div class="tl-s" contenteditable="true">BOD Follow-up</div></div></div>
+    <div class="tl-i"><div class="tl-d"><div class="tl-day" contenteditable="true">30</div><div class="tl-mo" contenteditable="true">May 2026</div></div><div class="tl-rail"><div class="tl-dot" style="background:var(--yellow)"></div></div><div class="tl-b"><div class="tl-t" contenteditable="true">BOD</div><div class="tl-s" contenteditable="true">Dantas Presentation</div></div></div>
+    <div class="tl-i"><div class="tl-d"><div class="tl-day" contenteditable="true" style="font-size:16px;color:var(--t4)">TBD</div><div class="tl-mo">&nbsp;</div></div><div class="tl-rail"><div class="tl-dot" style="background:var(--gray-mid)"></div></div><div class="tl-b"><div class="tl-t" contenteditable="true" style="color:var(--t3)">TBD</div><div class="tl-s" contenteditable="true">To be defined</div></div></div>
+  </div>
+</div>
+
+<!-- ═══ CHECKLIST ═══ -->
+<div class="tab" id="checklist">
+  <div class="sh"><div class="sh-t">PortCo Checklist</div><div class="sh-l"></div></div>
+  <div class="ck">
+    <div class="ck-r"><div class="ck-i ck-ok">&#10003;</div><div class="ck-t"><h4 contenteditable="true">Cash Flow Management</h4><p contenteditable="true">Done on a weekly basis</p></div><div class="ck-st" style="color:var(--s-done)">OK</div></div>
+    <div class="ck-r"><div class="ck-i ck-ok">&#10003;</div><div class="ck-t"><h4 contenteditable="true">Receivables Control</h4><p contenteditable="true">Monitored weekly with aging tracking</p></div><div class="ck-st" style="color:var(--s-done)">OK</div></div>
+    <div class="ck-r"><div class="ck-i ck-ok">&#10003;</div><div class="ck-t"><h4 contenteditable="true">Debt &amp; Liquidity Discipline</h4><p contenteditable="true">High visibility of debt payments</p></div><div class="ck-st" style="color:var(--s-done)">OK</div></div>
+    <div class="ck-r"><div class="ck-i ck-ok">&#10003;</div><div class="ck-t"><h4 contenteditable="true">Audited Financial Statements</h4><p contenteditable="true">Financial Statements are audited</p></div><div class="ck-st" style="color:var(--s-done)">OK</div></div>
+    <div class="ck-r"><div class="ck-i ck-og">&#9676;</div><div class="ck-t"><h4 contenteditable="true">Risk Matrix &amp; Internal Controls</h4><p contenteditable="true">Risk matrix created. Continue assessment</p></div><div class="ck-st" style="color:var(--yellow)">Ongoing</div></div>
+    <div class="ck-r"><div class="ck-i ck-ok">&#10003;</div><div class="ck-t"><h4 contenteditable="true">Monthly BP Reviews</h4><p contenteditable="true">Tracked monthly at Board level</p></div><div class="ck-st" style="color:var(--s-done)">OK</div></div>
+    <div class="ck-r"><div class="ck-i ck-ok">&#10003;</div><div class="ck-t"><h4 contenteditable="true">Strategic Projects &amp; Follow-ups</h4><p contenteditable="true">Created and monitored constantly</p></div><div class="ck-st" style="color:var(--s-done)">OK</div></div>
+    <div class="ck-r"><div class="ck-i ck-ok">&#10003;</div><div class="ck-t"><h4 contenteditable="true">Governance &amp; Board Effectiveness</h4><p contenteditable="true">BoD governance well structured</p></div><div class="ck-st" style="color:var(--s-done)">OK</div></div>
+    <div class="ck-r"><div class="ck-i ck-og">&#9676;</div><div class="ck-t"><h4 contenteditable="true">People &amp; Leadership Management</h4><p contenteditable="true">People governance being structured</p></div><div class="ck-st" style="color:var(--yellow)">Ongoing</div></div>
+    <div class="ck-r"><div class="ck-i ck-no">&#10007;</div><div class="ck-t"><h4 contenteditable="true">ESG &amp; Compliance Practices</h4><p contenteditable="true">Initiating compliance practices</p></div><div class="ck-st" style="color:var(--red)">Not OK</div></div>
+  </div>
+</div>
+
+<!-- ═══ ANNUAL GOALS ═══ -->
+<div class="tab" id="goals">
+  <div class="sh"><div class="sh-t">Annual Goals 2026</div><div class="sh-l"></div></div>
+  <div style="overflow-x:auto;border-radius:var(--r)">
+  <table class="goals-matrix">
+    <thead><tr><th>Goal / KPIs</th><th class="q-current">Q1</th><th>Q2</th><th>Q3</th><th>Q4</th></tr></thead>
+    <tbody>
+      <tr><td><div class="gm-name" contenteditable="true">MTN Targets: Crop 26/27</div><div class="gm-kpi" contenteditable="true">Net Rev ≥ R$69.5M · EBITDA ≥ -R$1.7M · FCF ≥ -R$6.0M</div></td><td class="q-cur" contenteditable="true">Net Sales ≥ R$43.7M<br>EBITDA ≥ R$6.5M<br>Net Debt ≤ R$22M</td><td contenteditable="true">Net Sales ≥ R$19.4M<br>EBITDA ≥ -R$0.2M<br>Net Debt ≤ R$20M</td><td contenteditable="true">Approve 2027 budget<br>Net Sales ≥ R$3.1M<br>EBITDA ≥ -R$1.5M<br>Net Debt ≤ R$8M</td><td contenteditable="true">2027 Budget</td></tr>
+      <tr><td><div class="gm-name" contenteditable="true">FCF: Crop 26/27</div><div class="gm-kpi" contenteditable="true">CF accuracy · FCF ≥ -R$6M · R$4M min cash</div></td><td class="q-cur" contenteditable="true">4+8 reforecast with commercial actions</td><td contenteditable="true">R$4M min cash</td><td contenteditable="true">—</td><td contenteditable="true">R$4M min cash</td></tr>
+      <tr><td><div class="gm-name" contenteditable="true">PPPS: Right Team, Processes, Priorities & Systems</div><div class="gm-kpi" contenteditable="true">PWR · Right team index · Turnover</div></td><td class="q-cur" contenteditable="true">Hire FP&A and HR<br>Complete goal cascading<br>Stabilize Dalla<br>Assist Origination Plan</td><td contenteditable="true">Maintain alignment<br>Implement PPPS plan</td><td contenteditable="true">Right Team Index</td><td contenteditable="true">Team feedback<br>Goals 2027<br>People plan 2027</td></tr>
+      <tr><td><div class="gm-name" contenteditable="true">2026 Funding</div><div class="gm-kpi" contenteditable="true">Zero equity · FCF ≥ -R$6M · R$4M min cash</div></td><td class="q-cur" contenteditable="true">Secure R$6m funding</td><td contenteditable="true">—</td><td contenteditable="true">Sicoob refinancing</td><td contenteditable="true">—</td></tr>
+      <tr><td><div class="gm-name" contenteditable="true">Define 2026 M&A Pipeline</div><div class="gm-kpi" contenteditable="true">M&A Pipeline</div></td><td class="q-cur" contenteditable="true">—</td><td contenteditable="true">Engage 1-2 key targets</td><td contenteditable="true">Evolve conversations</td><td contenteditable="true">Engage 1 priority target</td></tr>
+      <tr><td><div class="gm-name" contenteditable="true">Kickstart LTVCP / Re-underwriting</div><div class="gm-kpi" contenteditable="true">LTVCP quality</div></td><td class="q-cur" contenteditable="true">Sorghum BP draft<br>Re-UW preliminary model</td><td contenteditable="true">Kick-off LTVCP<br>Updated Exit Strategy</td><td contenteditable="true">Approve re-UW / LTVCP</td><td contenteditable="true">—</td></tr>
+    </tbody>
+  </table>
+  </div>
+</div>
+
+</div>
+
+<script>
+// NAV
+document.querySelectorAll('.nav button').forEach(b=>{b.addEventListener('click',()=>{document.querySelectorAll('.nav button').forEach(x=>x.classList.remove('on'));document.querySelectorAll('.tab').forEach(x=>x.classList.remove('on'));b.classList.add('on');document.getElementById(b.dataset.t).classList.add('on')})});
+
+// CARD EXPAND — don't toggle if clicking editable content or badges
+function t(el){
+  const tgt=event?event.target:el;
+  if(tgt.getAttribute('contenteditable')==='true')return;
+  if(tgt.closest('[contenteditable="true"]'))return;
+  if(tgt.closest('.b-pri')||tgt.closest('.b-stat'))return;
+  if(tgt.closest('.badge-dd'))return;
+  const card=el.closest?el.closest('.card'):(el.parentElement?el.parentElement.closest('.card'):null);
+  if(card)card.classList.toggle('open');
+}
+
+// CATEGORY FILTERS (On the Radar)
+document.querySelectorAll('#rf .fb').forEach(b=>{b.addEventListener('click',()=>{document.querySelectorAll('#rf .fb').forEach(x=>x.classList.remove('on'));b.classList.add('on');const f=b.dataset.r;document.querySelectorAll('#radar .grp').forEach(g=>{g.style.display=(f==='all'||g.dataset.rc===f)?'':'none'})})});
+
+// PRIORITY FILTERS
+document.querySelectorAll('.fbar[data-filter-tab] .fb[data-fp]').forEach(b=>{
+  b.addEventListener('click',()=>{
+    const bar=b.closest('.fbar');
+    bar.querySelectorAll('.fb[data-fp]').forEach(x=>x.classList.remove('on'));
+    b.classList.add('on');
+    const f=b.dataset.fp;
+    const tab=bar.closest('.tab');
+    tab.querySelectorAll('.card[data-priority]').forEach(c=>{
+      c.style.display=(f==='all'||c.dataset.priority===f)?'':'none';
+    });
+  });
+});
+
+// DEADLINE FILTERS
+document.querySelectorAll('.fb[data-fd]').forEach(b=>{
+  b.addEventListener('click',()=>{
+    const bar=b.closest('.fbar');
+    bar.querySelectorAll('.fb[data-fd]').forEach(x=>x.classList.remove('on'));
+    b.classList.add('on');
+    const f=b.dataset.fd;
+    document.querySelectorAll('#pl .card[data-dl]').forEach(c=>{
+      c.style.display=(!f||f==='all'||c.dataset.dl===f)?'':'none';
+    });
+  });
+});
+
+// BADGE DROPDOWNS — always active, no edit mode needed
+const PRI_MAP={high:{cls:'b-hi',label:'High'},medium:{cls:'b-med',label:'Medium'},low:{cls:'b-lo',label:'Low'}};
+const STAT_MAP={in:{cls:'b-in',label:'In progress'},oh:{cls:'b-oh',label:'On hold'},done:{cls:'b-done',label:'Done'},no:{cls:'b-no',label:'Not OK'}};
+const PRI_COLORS={high:'#C0392B',medium:'#E9A832',low:'#64828C'};
+const STAT_COLORS={in:'#006178',oh:'#E9A832',done:'#2E8B57',no:'#DA5417'};
+
+document.addEventListener('click',function(e){
+  const badge=e.target.closest('.b-pri')||e.target.closest('.b-stat');
+  if(!badge){closeDD();return;}
+  if(e.target.closest('.badge-dd'))return;
+  e.stopPropagation();
+  closeDD();
+  const isPri=badge.classList.contains('b-pri');
+  const map=isPri?PRI_MAP:STAT_MAP;
+  const colors=isPri?PRI_COLORS:STAT_COLORS;
+  const dd=document.createElement('div');
+  dd.className='badge-dd';
+  Object.entries(map).forEach(([k,v])=>{
+    const btn=document.createElement('button');
+    btn.innerHTML='<span class="bdd" style="background:'+colors[k]+'"></span>'+v.label;
+    btn.addEventListener('click',function(ev){
+      ev.stopPropagation();
+      Object.values(map).forEach(m=>badge.classList.remove(m.cls));
+      badge.classList.add(v.cls);
+      badge.dataset.val=k;
+      badge.innerHTML='<span class="d"></span>'+v.label;
+      if(isPri){const card=badge.closest('.card');if(card)card.dataset.priority=k;}
+      closeDD();
+    });
+    dd.appendChild(btn);
+  });
+  badge.appendChild(dd);
+});
+function closeDD(){document.querySelectorAll('.badge-dd').forEach(d=>d.remove());}
+
+// ADD CARD
+function addCard(id){
+  const c=document.getElementById(id);if(!c)return;
+  const card=document.createElement('div');
+  card.className='card open';card.dataset.priority='high';
+  card.innerHTML='<div class="card-top" onclick="t(this)"><div class="card-main"><div class="card-row1"><span class="card-title" contenteditable="true">New item</span></div><div class="card-row2"><span class="b b-hi b-pri" data-val="high"><span class="d"></span>High</span><span class="b b-in b-stat" data-val="in"><span class="d"></span>In progress</span></div></div><div class="card-chv">&#9662;</div></div><div class="card-body" style="max-height:600px"><div class="card-detail"><div class="db"><div class="db-l">Current Status</div><div class="db-t" contenteditable="true">...</div></div><div class="db"><div class="db-l">Next Steps</div><div class="db-t" contenteditable="true">...</div></div></div></div>';
+  c.appendChild(card);
+  card.querySelector('.card-title').focus();
+}
+
+// ADD PRIORITY
+function addPriority(){
+  const list=document.getElementById('prio-list');
+  const n=list.querySelectorAll('.pr').length+1;
+  const pr=document.createElement('div');
+  pr.className='pr';
+  pr.innerHTML='<div class="pr-n">'+n+'</div><h3 contenteditable="true">New priority</h3><button class="pr-del" onclick="this.closest(\'.pr\').remove();renumberPrios()" title="Remove">×</button>';
+  list.appendChild(pr);
+  pr.querySelector('h3').focus();
+}
+function renumberPrios(){
+  document.querySelectorAll('#prio-list .pr .pr-n').forEach((n,i)=>{n.textContent=i+1;});
+}
+</script>
+</body>
+</html>
